@@ -1,13 +1,16 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_tutorial/tech_news_app/common/constant.dart';
 import 'package:flutter_tutorial/tech_news_app/data/remote/apis.dart';
+import 'package:flutter_tutorial/tech_news_app/data/remote/news_dto/article.dart';
+import 'package:flutter_tutorial/tech_news_app/data/remote/news_dto/news_dto.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_tutorial/tech_news_app/data/repository/base_news_repository.dart';
 
 class NewsRepository extends BaseNewrepository {
   @override
-  Future<List> fetchNews(String? query, int page) async {
+  Future<NewsDto> fetchNews(String? query, int page) async {
     query ??= '';
     final Uri uri = Uri.parse(AppApis.baseUrl +
         AppApis.requestSymbolQuestionParams +
@@ -28,10 +31,8 @@ class NewsRepository extends BaseNewrepository {
         AppApis.requestSymbolAndParams +
         AppApis.requestQParams +
         "=$query");
-    print(uri.toString());
     final response = await http.get(uri);
-    final mapResult = jsonDecode(response.body);
-    print(mapResult);
-    return mapResult['articles'];
+    final newsDto = NewsDto.fromJson(jsonDecode(response.body));
+    return newsDto;
   }
 }
